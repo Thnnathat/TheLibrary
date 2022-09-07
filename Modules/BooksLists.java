@@ -59,21 +59,20 @@ public class BooksLists {
             System.out.println("null");
         }
     }
-    
-    public boolean AddedBook(Head head, String isbn) {
+
+    public Node FindNode(Head head, String isbn, String title) { //Method for manager.
         Node node;
         node = head.First;
-        if (head.Length > 0) {
-            while (node != null) {
-                if (node.Detail[0].equalsIgnoreCase(isbn)){
-                    return true;
-                }
-                node = node.Next;
+        while (node != null) {
+            if (node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) {
+                break;
             }
+            node = node.Next;
         }
-        return false;
+        return node; //ถ้าพบโหนดขอมูลที่เราต้องการแล้ว ให้ return โหนดตัวนั้น
     }
 
+    //*Overload สำหรับแค่ isbn */
     public Node FindNode(Head head, String isbn) { //Method for manager.
         Node node;
         node = head.First;
@@ -107,17 +106,22 @@ public class BooksLists {
         return false;
     }
 
-    public boolean DeleteBetween(Head head, String item []) { //Method for manager.
+    public boolean DeleteBetween(Head head, String item) { //Method for manager.
         Node prev;
         Node node;
         node = head.First;
+        Node buff = node.Next;
         prev = null;
         if (head.Length == 0) {
             return false;
         }
         while (node != null) {
-            if (node.Detail[0].equals(item[0])) {
-                prev.Next = node.Next;
+            if (node.Detail[0].equals(item)) {
+                if (prev == null) {
+                    head.First = head.Last = node.Next;
+                } else {
+                    prev.Next = node.Next;
+                }
                 node.Next = null; 
                 System.gc();
                 break;

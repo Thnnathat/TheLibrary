@@ -7,9 +7,10 @@ public class Controller {
     public void ManagerMenu() {
         menu : while (true) {
             System.out.println("ตัวเลือก\n1.เพิ่มหนังสือ\n2.คืนหนังสือ\n3.บุคคลที่ยืมหนังสือ\n4.ลบหนังสือ\n0.กลับ");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             Scanner sc = new Scanner(System.in);
             int choises = sc.nextInt();
+            System.out.println("--------------------");
             switch (choises) {
                 case 0 : 
                     break menu; 
@@ -44,7 +45,8 @@ public class Controller {
         String title = sc.nextLine();
         System.out.print(">Quantity: ");
         int Quantity = sc.nextInt();
-        boolean bool = manager.addBook(isbn, title, Quantity); 
+        boolean bool = manager.AddBook(isbn, title, Quantity); 
+        System.out.println("--------------------");
     }
 
     public void Back() {
@@ -54,6 +56,7 @@ public class Controller {
         System.out.print(">Quantity: ");
         int Quantity = sc.nextInt();
         boolean bool = manager.ReturnBook(isbn, Quantity);
+        System.out.println("--------------------");
     }
 
     public void Person() {
@@ -61,30 +64,48 @@ public class Controller {
         System.out.print(">Isbn: ");
         String isbn = sc.nextLine();
         manager.FindPerson(isbn);
+        System.out.println("--------------------");
     }
 
     public void DeleteBookList() { 
         Scanner sc = new Scanner(System.in);
         System.out.print(">Isbn: ");
-        String item [] = {sc.nextLine()};
+        String item = sc.nextLine();
         manager.DeleteBooks(item);
+        System.out.println("--------------------");
     }
 
     public void BookLists() {
         manager.showBooks();
+        System.out.println("--------------------");
+    }
+
+    public String [] Login() {
+        String item [] = new String[3];
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Id: ");
+        item[0] = sc.nextLine();
+        System.out.print("Auth: ");
+        item[1] = sc.nextLine();
+        System.out.print("Name: ");
+        item[2] = sc.nextLine();
+        System.out.println("--------------------");
+        return item;
     }
 
     public void User() {
+        String item [] = Login();
         menu : while (true) {
             System.out.println("ตัวเลือก\n1.ยืมหนังสือ\n2.ยกเลิกการยืมหนังสือ\n3.หนังสือที่ยีมอยู่\n0.กลับ");
-            System.out.print(">>>");
+            System.out.print(">>> ");
             Scanner sc = new Scanner(System.in);
             int choises = sc.nextInt();
+            System.out.println("--------------------");
             switch (choises) {
                 case 0 : 
                     break menu; 
                 case 1 : 
-                    InsertBook();
+                    Borrow(item);
                     break;
                 case 2 : 
                     Back();
@@ -100,12 +121,15 @@ public class Controller {
     }
 
 //!Method for User.
-    public void Borrow() {
+    public void Borrow(String item[]) {
         Scanner sc = new Scanner(System.in);
         System.out.print(">Isbn: ");
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
+        int status = manager.Barrowing(isbn, title, item);
+        System.out.println(status);
+        System.out.println("--------------------");
     }
 
     public void Cancel() {
@@ -114,6 +138,7 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
+        System.out.println("--------------------");
     }
 
     public void Borrowed() {

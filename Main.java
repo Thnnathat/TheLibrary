@@ -11,6 +11,7 @@ class Main {
             System.out.print(">>> ");
             Scanner sc = new Scanner(System.in);
             int choises = sc.nextInt();
+            System.out.println("--------------------");
             switch (choises) {
                 case 0 : 
                     break menu;
