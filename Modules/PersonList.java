@@ -81,17 +81,43 @@ public class PersonList {
         return true;
     }
 
-    public boolean DeleteBetween(PersonHead per, String item []) {
-        Node prev = new Node();
-        Node node = new Node();
-        node = per.First;
+    // public boolean DeleteBetween(PersonHead per, String item []) {
+    //     Node prev = new Node();
+    //     Node node = new Node();
+    //     node = per.First;
+    //     prev = null;
+    //     if (per.Length == 0) {
+    //         return false;
+    //     }
+    //     while (node != null) {
+    //         if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
+    //             prev.Next = node.Next;
+    //             node.Next = null; 
+    //             System.gc();
+    //             break;
+    //         } else {
+    //             prev = node;
+    //             node = node.Next;
+    //         }
+    //     }
+    //     return true;
+    // }
+
+    public boolean DeleteBetween(PersonHead head, String item[]) { //Method for manager.
+        Node prev;
+        Node node;
+        node = head.First;
         prev = null;
-        if (per.Length == 0) {
+        if (head.Length == 0) {
             return false;
         }
         while (node != null) {
             if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
-                prev.Next = node.Next;
+                if (prev == null) {
+                    head.First = node.Next;
+                } else {
+                    prev.Next = node.Next;
+                }
                 node.Next = null; 
                 System.gc();
                 break;
@@ -102,4 +128,5 @@ public class PersonList {
         }
         return true;
     }
+    
 }

@@ -110,7 +110,6 @@ public class BooksLists {
         Node prev;
         Node node;
         node = head.First;
-        Node buff = node.Next;
         prev = null;
         if (head.Length == 0) {
             return false;
@@ -118,7 +117,7 @@ public class BooksLists {
         while (node != null) {
             if (node.Detail[0].equals(item)) {
                 if (prev == null) {
-                    head.First = head.Last = node.Next;
+                    head.First = node.Next;
                 } else {
                     prev.Next = node.Next;
                 }
