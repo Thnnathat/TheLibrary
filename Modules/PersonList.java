@@ -1,15 +1,15 @@
 package Modules;
 public class PersonList {
     
-    public static class Node {
+    public static class PerNode {
         String Item [] = new String[3]; //Id Auth Name
         int Status;
-        Node Next;
+        PerNode Next;
     }
 
     public static class PersonHead {
         int Length;
-        Node First, Last;
+        PerNode First, Last;
     }
 
     public PersonHead CreateList() {
@@ -21,7 +21,7 @@ public class PersonList {
     }
 
     public boolean AddLast(PersonHead per, String item [], int status) {
-        Node node = new Node();
+        PerNode node = new PerNode();
         for (int i=0;i<item.length;i++) {
             node.Item[i] = item[i];
         }
@@ -38,14 +38,14 @@ public class PersonList {
     }
 
     public void Traverse(PersonHead per) {
-        Node node;
+        PerNode node;
         node = per.First;
         if (per.Length > 0) {
             while (node != null) {
                 for (int i=0;i<node.Item.length;i++) {
                     System.out.print(node.Item[i]+" ");
                 }
-                System.out.println("");
+                System.out.println(node.Status);
                 node = node.Next;
             }
         } else {
@@ -53,8 +53,8 @@ public class PersonList {
         }
     }
 
-    public Node FindNode(PersonHead per, String item []) {
-        Node node;
+    public PerNode FindNode(PersonHead per, String item []) {
+        PerNode node;
         node = per.First;
         while (node != null) {
             if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
@@ -66,7 +66,7 @@ public class PersonList {
     }
 
     public boolean DeleteFirst(PersonHead per) {
-        Node node;
+        PerNode node;
         if (per.Length == 0) {
             return false;
         }
@@ -81,31 +81,9 @@ public class PersonList {
         return true;
     }
 
-    // public boolean DeleteBetween(PersonHead per, String item []) {
-    //     Node prev = new Node();
-    //     Node node = new Node();
-    //     node = per.First;
-    //     prev = null;
-    //     if (per.Length == 0) {
-    //         return false;
-    //     }
-    //     while (node != null) {
-    //         if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
-    //             prev.Next = node.Next;
-    //             node.Next = null; 
-    //             System.gc();
-    //             break;
-    //         } else {
-    //             prev = node;
-    //             node = node.Next;
-    //         }
-    //     }
-    //     return true;
-    // }
-
     public boolean DeleteBetween(PersonHead head, String item[]) { //Method for manager.
-        Node prev;
-        Node node;
+        PerNode prev;
+        PerNode node;
         node = head.First;
         prev = null;
         if (head.Length == 0) {

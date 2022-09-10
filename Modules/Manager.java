@@ -3,15 +3,33 @@ package Modules;
 import java.util.Scanner;
 import Modules.BooksLists.Head;
 import Modules.BooksLists.Node;
+import Modules.PersonList.PerNode;
 import Modules.PersonList.PersonHead;
+
 public class Manager {
     BooksLists book = new BooksLists();
     Head head = book.CreateList();
+
+    public boolean SetQueue(Node node) {
+        if (node != null) {
+            PersonHead per = node.per;
+            PerNode perNode;
+            perNode = per.First;
+            while (node.Quantity >= node.Requests && perNode != null){
+                perNode.Status = 1;     
+                perNode = perNode.Next;
+                node.Requests += 1;
+            }
+            return true;
+        }
+        return false;
+    }
 
     public boolean AddBook(String isbn, String title, int Quantity) {
         Node node = book.FindNode(head, isbn);
         if (node != null) {
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
+                SetQueue(node);
                 node.Quantity += Quantity;
                 return true;
             } 
@@ -28,6 +46,7 @@ public class Manager {
         if (node != null) {
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
                 node.Requests -= Requests;
+                SetQueue(node);
                 return true;
             } 
         }
@@ -48,20 +67,26 @@ public class Manager {
         }
     }
 
-    public void DeleteBooks(String item) {
-        book.DeleteBetween(head, item);
+    public boolean DeleteBooks(String item) {
+        if (book != null) {
+            book.DeleteBetween(head, item);
+            return true;
+        }
+        return false;
     }
 
     public void showBooks() {
-        book.Traverse(head);
+        if (book != null) {
+            book.Traverse(head);
+        }
     }
 
-    public boolean Barrowing(String isbn, String title, String item[]) {
+    public boolean Borrowing(String isbn, String title, String item[]) {
         Node node = book.FindNode(head, isbn, title);
         boolean bool;
         if (node != null) {
             PersonHead per = node.per;
-            if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) {
+            if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) { //isbn, title
                 if(node.Quantity > node.Requests){
                     node.Requests += 1;
                     return true;//ยืมได้ 
@@ -80,6 +105,25 @@ public class Manager {
         return false;
     }
 
+    //*Overload Borrowing method for bypass the question */
+    public boolean Borrowing(String isbn, String item[]) { //!Method for developer.
+        Node node = book.FindNode(head, isbn);
+        if (node != null) {
+            PersonHead per = node.per;
+            if(node.Detail[0].equalsIgnoreCase(isbn)) { //isbn, title
+                if(node.Quantity > node.Requests){
+                    node.Requests += 1;
+                    return true;//ยืมได้ 
+                } else {
+                    node.person.AddLast(per, item, 0);
+                    node.Requests += 1;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean Cancel(String isbn, String title, String item[]) {
         Node node = book.FindNode(head, isbn);
         if (node != null) {
@@ -88,21 +132,30 @@ public class Manager {
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
                 person.DeleteBetween(per, item);
                 node.Requests -= 1;
+                SetQueue(node);
                 return true;
             }
         }
         return false;
     }
 
+    public boolean GetBook() {
+        return false;
+    }
+
+    public void FindBorrowed(String item[]) {
+        book.Traverse(head, item);
+    }
+
     public boolean NeedBorrow() {
         Scanner sc = new Scanner(System.in);
         while (true) {
-            System.out.println("หนังสือไม่ว่าง ต้องการจองหนังสือหรือไม่");
-            System.out.print(">>> ");
-            String choises = sc.nextLine();
-            if (choises.equalsIgnoreCase("ใช่")) {
+            System.out.println("หนังสือไม่ว่าง ต้องการจองหนังสือหรือไม่ y/n");
+            System.out.print("-> ");
+            String choises = sc.nextLine().toLowerCase();
+            if (choises.startsWith("y")) {
                 return true;
-            } else if (choises.equalsIgnoreCase("ไม่")){
+            } else if (choises.startsWith("n")){
                 return false;
             } else {
                 continue;

@@ -1,4 +1,5 @@
 package Modules;
+import Modules.PersonList.PerNode;
 import Modules.PersonList.PersonHead;;
 
 public class BooksLists {
@@ -59,6 +60,40 @@ public class BooksLists {
             System.out.println("null");
         }
     }
+//*Overload ท่องไปทุกโหนด รวมทั้ง Sub Node*/
+    public void Traverse(Head head, String item[]) {
+        Node node;
+        PersonList person;
+        PersonHead per;
+        PerNode perNode;
+        node = head.First;
+        if (head.Length > 0) {
+            while (node != null) {
+                person = node.person;
+                per = node.per;
+                perNode = person.FindNode(per, item);
+                if (per.Length > 0) {
+                    if (perNode != null) {
+                        if (perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) {
+                            for (int i=0;i<node.Detail.length;i++) {
+                                System.out.print(node.Detail[i]+" ");
+                            }
+                            if (perNode.Status == 1) {
+                                System.out.println("ถึงคิวแล้ว");
+                            } else if (perNode.Status == 0){
+                                System.out.println("ยังไม่ถึงคิว");
+                            }
+                        }
+                    }
+                }
+                node = node.Next;
+            }
+            System.out.println("--------------------");
+        } else {
+            System.out.println("null");
+            System.out.println("--------------------");
+        }
+    }
 
     public Node FindNode(Head head, String isbn, String title) { //Method for manager.
         Node node;
@@ -72,7 +107,7 @@ public class BooksLists {
         return node; //ถ้าพบโหนดขอมูลที่เราต้องการแล้ว ให้ return โหนดตัวนั้น
     }
 
-    //*Overload สำหรับแค่ isbn */
+    //*Overload สำหรับแค่ isbn*/
     public Node FindNode(Head head, String isbn) { //Method for manager.
         Node node;
         node = head.First;
