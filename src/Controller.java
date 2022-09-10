@@ -4,11 +4,11 @@ import Modules.Manager;
 import java.io.File;
 import java.util.Scanner; 
 public class Controller {
-    Manager manager = new Manager();
+    Manager manager = new Manager();//สร้าง obj ของ Manager class.
 
     public void ManagerMenu() {
         menu1 : while (true) {
-            System.out.println("ตัวเลือก\n1.เพิ่มหนังสือ\n2.คืนหนังสือ\n3.บุคคลที่ยืมหนังสือ\n4.ลบหนังสือ\n5.หนังสือทั้งหมด\n6.เพิ่มชุดหนังสือ\n7.รับหนังสือ\n0.กลับ");
+            System.out.println("ตัวเลือก\n1.เพิ่มหนังสือ\n2.คืนหนังสือ\n3.บุคคลที่รอคิว\n4.ลบหนังสือ\n5.หนังสือทั้งหมด\n6.เพิ่มชุดหนังสือ\n7.รับหนังสือ\n0.กลับ");
             System.out.print(">>> ");
             try {
                 Scanner sc = new Scanner(System.in);
@@ -50,15 +50,23 @@ public class Controller {
 
 //!Method for manager.
     public void InsertBook() {
-        Scanner sc = new Scanner(System.in);
-        System.out.print(">Isbn: ");
-        String isbn = sc.nextLine();
-        System.out.print(">Title: ");
-        String title = sc.nextLine();
-        System.out.print(">Quantity: ");
-        int Quantity = sc.nextInt();
-        boolean bool = manager.AddBook(isbn, title, Quantity); 
-        System.out.println("--------------------");
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.print(">Isbn: ");
+            String isbn = sc.nextLine();
+            System.out.print(">Title: ");
+            String title = sc.nextLine();
+            System.out.print(">Quantity: ");
+            int Quantity = sc.nextInt();
+            boolean bool = manager.AddBook(isbn, title, Quantity); 
+            if(bool) {
+                System.out.println("เพิ่มหนังสือเรียบร้อย");
+            } else {
+                System.out.println("เพิ่มหนังสือไม่สำเร็จ");
+            };
+            System.out.println("--------------------"); 
+        } catch (Exception e) {
+        }
     }
 
     public void Back() {
@@ -67,7 +75,13 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Quantity: ");
         int Quantity = sc.nextInt();
+        System.out.println("--------------------");
         boolean bool = manager.ReturnBook(isbn, Quantity);
+        if (bool) {
+            System.out.println("คืนหนังสือสำเร็จ");
+        } else {
+            System.out.println("คืนหนังสือไม่สำเร็จ");
+        }
         System.out.println("--------------------");
     }
 
@@ -84,7 +98,12 @@ public class Controller {
         System.out.print(">Isbn: ");
         String item = sc.nextLine();
         System.out.println("--------------------");
-        manager.DeleteBooks(item);
+        boolean bool = manager.DeleteBooks(item);
+        if (bool) {
+            System.out.println("ลบหนังสือสำเร็จ");
+        } else {
+            System.out.println("ลบหนังสือไม่สำเร็จ");
+        }
         System.out.println("--------------------");
     }
 
@@ -101,17 +120,17 @@ public class Controller {
                 String rawData = "";
                 String[] detail = new String[2];
                 int quantity = 0; // quantity.
-                while (input.hasNext()) {
+                while (input.hasNext()) {//ตรวจบรรทัด
                     rawData = input.nextLine();
-                    data = rawData.split(",");
+                    data = rawData.split(",");//หั่น string ให้อยู่ใน Array.
                     for (int i=0;i<data.length;i++) {
-                        if (i<=1) {
+                        if (i<=1) {//นำแค่ isbn และ title ใส่ใน array (Index 0,1).
                             detail[i] = data[i];
                         } else if (i==2) {
-                            quantity = Integer.parseInt(data[i]);
-                        }
+                            quantity = Integer.parseInt(data[i]);//จำนวนหนังสือ type int เนื่องจาก array ต้องมีขอมูลประเภทเดียวกัน ต้องแยก Quantity ออก.
+                        }  
                     }
-                    manager.AddBook(detail[0], detail[1], quantity);  
+                    manager.AddBook(detail[0], detail[1], quantity);//เพิ่มหนังสือ isbn title quantity parameter. 
                 }
             }
             return true;
@@ -128,7 +147,12 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
-        manager.Cancel(isbn, title, item); 
+        boolean bool = manager.Cancel(isbn, title, item); 
+        if (bool) {
+            System.out.println("รับหนังสือแล้ว");
+        } else {
+            System.out.println("รับหนังสือไม่สำเร็จ");
+        }
         System.out.println("--------------------");
     }
 
@@ -148,7 +172,7 @@ public class Controller {
     public void UserMenu() {
         String[] item = Login();
         menu2 : while (true) {
-            System.out.println("ตัวเลือก\n1.ยืมหนังสือ\n2.ยกเลิกการยืมหนังสือ\n3.หนังสือที่ยีมอยู่\n0.กลับ");
+            System.out.println("ตัวเลือก\n1.ยืมหนังสือ\n2.ยกเลิกการยืมหนังสือ\n3.คิวหนังสือ\n0.กลับ");
             System.out.print(">>> ");
             Scanner sc = new Scanner(System.in);
             int choises = sc.nextInt();
@@ -179,8 +203,12 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
-        boolean status = manager.Borrowing(isbn, title, item);
-        System.out.println(status);
+        boolean bool = manager.Borrowing(isbn, title, item);
+        if (bool) {
+            System.out.println("ยืมหนังสือ/รอคิวยืมหนังสือสำเร็จ");
+        } else {
+            System.out.println("ยืมหนังสือ/รอคิวยืมหนังสือไม่สำเร็จ");
+        }
         System.out.println("--------------------");
     }
 
@@ -190,7 +218,12 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
-        manager.Cancel(isbn, title, item);
+        boolean bool = manager.Cancel(isbn, title, item);
+        if (bool) {
+            System.out.println("ยกเลิกสำเร็จ");
+        } else {
+            System.out.println("ยกเลิกไม่สำเร็จ");
+        }
         System.out.println("--------------------");
     }
 

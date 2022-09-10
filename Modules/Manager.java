@@ -15,7 +15,7 @@ public class Manager {
             PersonHead per = node.per;
             PerNode perNode;
             perNode = per.First;
-            while (node.Quantity >= node.Requests && perNode != null){
+            while (node.Quantity > node.Requests && perNode != null){
                 perNode.Status = 1;     
                 perNode = perNode.Next;
                 node.Requests += 1;
@@ -45,9 +45,11 @@ public class Manager {
         Node node = book.FindNode(head, isbn);
         if (node != null) {
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
-                node.Requests -= Requests;
-                SetQueue(node);
-                return true;
+                if(node.Requests > 0) {
+                    node.Requests -= Requests;
+                    SetQueue(node);
+                    return true;
+                }
             } 
         }
         return false;
@@ -69,8 +71,8 @@ public class Manager {
 
     public boolean DeleteBooks(String item) {
         if (book != null) {
-            book.DeleteBetween(head, item);
-            return true;
+            boolean bool = book.DeleteBetween(head, item);
+            return bool;
         }
         return false;
     }
@@ -129,11 +131,16 @@ public class Manager {
         if (node != null) {
             PersonList person = node.person;
             PersonHead per = node.per;
+            PerNode perNode = person.FindNode(per, item);
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
-                person.DeleteBetween(per, item);
-                node.Requests -= 1;
-                SetQueue(node);
-                return true;
+                if (perNode != null) {
+                    if(perNode.Item[0].equalsIgnoreCase(item[0])) {
+                        person.DeleteBetween(per, item);
+                        node.Requests -= 1;
+                        SetQueue(node);
+                        return true;
+                    }
+                }
             }
         }
         return false;

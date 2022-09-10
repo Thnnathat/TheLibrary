@@ -48,11 +48,12 @@ public class BooksLists {
         Node node;
         node = head.First;
         if (head.Length > 0) {
+            System.out.println("ISBN\tTitle\tQuantity\tRequests");
             while (node != null) {
                 for (int i=0;i<node.Detail.length;i++) {
-                    System.out.print(node.Detail[i]+" ");
+                    System.out.print(node.Detail[i]+"\t");
                 }
-                System.out.printf("%d "+"%d",node.Quantity,node.Requests);
+                System.out.printf("%d\t"+"%d\t",node.Quantity,node.Requests);
                 System.out.println("");
                 node = node.Next;
             }
@@ -60,6 +61,7 @@ public class BooksLists {
             System.out.println("null");
         }
     }
+
 //*Overload ท่องไปทุกโหนด รวมทั้ง Sub Node*/
     public void Traverse(Head head, String item[]) {
         Node node;
@@ -68,6 +70,7 @@ public class BooksLists {
         PerNode perNode;
         node = head.First;
         if (head.Length > 0) {
+            System.out.println("ISBN\tTitle\tStatus");
             while (node != null) {
                 person = node.person;
                 per = node.per;
@@ -76,7 +79,7 @@ public class BooksLists {
                     if (perNode != null) {
                         if (perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) {
                             for (int i=0;i<node.Detail.length;i++) {
-                                System.out.print(node.Detail[i]+" ");
+                                System.out.print(node.Detail[i]+"\t");
                             }
                             if (perNode.Status == 1) {
                                 System.out.println("ถึงคิวแล้ว");
@@ -158,12 +161,12 @@ public class BooksLists {
                 }
                 node.Next = null; 
                 System.gc();
-                break;
+                return true;
             } else {
                 prev = node;
                 node = node.Next;
             }
         }
-        return true;
+        return false;
     }
 }

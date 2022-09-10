@@ -2,7 +2,7 @@ import java.util.Scanner;
 import src.Controller;
 class Main {
     public static void main(String[] args) {
-        Controller controll = new Controller();
+        Controller controll = new Controller(); //สร้าง boj ของ Controller Class.
         try {
             menu : while (true) {
                 System.out.println("เมนูหลัก\n1.ผู้จัดการ\n2.ผู้ใช้\n0.ออกจากโปรแกรม");

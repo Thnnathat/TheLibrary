@@ -98,13 +98,12 @@ public class PersonList {
                 }
                 node.Next = null; 
                 System.gc();
-                break;
+                return true;
             } else {
                 prev = node;
                 node = node.Next;
             }
         }
-        return true;
-    }
-    
+        return false;
+    } 
 }
