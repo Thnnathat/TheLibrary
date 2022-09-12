@@ -42,8 +42,8 @@ public class Manager {
     }
 
     public boolean ReturnBook(String isbn, int Requests) {
-        Node node = book.FindNode(head, isbn);
-        if (node != null) {
+        Node node = book.FindNode(head, isbn); //ถ้าไม่มีหนังสือเล่มที่จะคืนในคลัง จะได้ null
+        if (node != null) {//ถ้า null จะไม่ทำงานใดๆ
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
                 if(node.Requests > 0) {
                     node.Requests -= Requests;
@@ -134,11 +134,13 @@ public class Manager {
             PerNode perNode = person.FindNode(per, item);
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
                 if (perNode != null) {
-                    if(perNode.Item[0].equalsIgnoreCase(item[0])) {
-                        person.DeleteBetween(per, item);
-                        node.Requests -= 1;
-                        SetQueue(node);
-                        return true;
+                    if(perNode.Item[0].equalsIgnoreCase(item[0])) { //!น่าจะมีปัญหา *แก้แล้วรอทดสอบ
+                        boolean bool = person.DeleteBetween(per, item);//ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
+                        if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
+                            node.Requests -= 1;
+                            SetQueue(node);
+                            return true;
+                        }
                     }
                 }
             }
