@@ -8,7 +8,7 @@ public class BooksLists {
         PersonList person = new PersonList();
         PersonHead per = person.CreateList();
         String Detail [] = new String[2];
-        int Quantity;
+        int Quantity = 0;
         int Requests = 0;
         Node Next;
         public int length;
@@ -27,12 +27,13 @@ public class BooksLists {
         return head;
     }
 
-    public boolean Addfirst(Head head, String Detail [], int Quantity) {
+    public boolean AddFirst(Head head, String Detail [], int Quantity) {
         Node node = new Node();
         for (int i=0;i<Detail.length;i++) {
             node.Detail[i] = Detail[i];
         }
         node.Quantity = Quantity;
+        node.Requests = 0;
         node.Next = head.First;
         if (head.Length == 0) {
             head.First = node;
@@ -44,17 +45,35 @@ public class BooksLists {
         return true;
     }
 
+    public boolean AddLast(Head per, String item [], int quantity, int requests) {
+        Node node = new Node();
+        for (int i=0;i<item.length;i++) {
+            node.Detail[i] = item[i];
+        }
+        node.Quantity = quantity;
+        node.Requests = requests;
+        node.Next = null;
+        if (per.Length == 0) {
+            per.First = node;
+            per.Last = node;
+        } else {
+            per.Last.Next = node;
+            per.Last = node; 
+        }
+        per.Length += 1;
+        return true;
+    }    
+
     public void Traverse(Head head) {
         Node node;
         node = head.First;
         if (head.Length > 0) {
-            System.out.println("ISBN\tTitle\tQuantity\tRequests");
+            System.out.println("ISBN\tTitle\t\tQuantity\tRequests");
             while (node != null) {
                 for (int i=0;i<node.Detail.length;i++) {
                     System.out.print(node.Detail[i]+"\t");
                 }
-                System.out.printf("%d\t"+"%d\t",node.Quantity,node.Requests);
-                System.out.println("");
+                System.out.printf("%d\t\t"+"%d\t%d\n",node.Quantity,node.Requests,(Math.abs(node.Quantity-node.Requests)));
                 node = node.Next;
             }
         } else {
@@ -70,7 +89,7 @@ public class BooksLists {
         PerNode perNode;
         node = head.First;
         if (head.Length > 0) {
-            System.out.println("ISBN\tTitle\tStatus");
+            System.out.println("ISBN\t\tTitle\t\tStatus");
             while (node != null) {
                 person = node.person;
                 per = node.per;
@@ -79,7 +98,7 @@ public class BooksLists {
                     if (perNode != null) {
                         if (perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) {
                             for (int i=0;i<node.Detail.length;i++) {
-                                System.out.print(node.Detail[i]+"\t");
+                                System.out.print(node.Detail[i]+"\t\t");
                             }
                             if (perNode.Status == 1) {
                                 System.out.println("ถึงคิวแล้ว");
@@ -96,6 +115,34 @@ public class BooksLists {
             System.out.println("null");
             System.out.println("--------------------");
         }
+    }
+
+    public String[] SaveFile(Head head) {
+        Node node;
+        PersonList person;
+        PersonHead per;
+        String data;
+        node = head.First;
+        String[] arr = new String[head.Length];
+        int n = 0;
+        if (head.Length > 0) {
+            while (node != null) {
+                data = "";
+                person = node.person;
+                per = node.per;
+                for (int i=0;i<node.Detail.length;i++) {
+                    data += node.Detail[i]+",";
+                }
+                data += node.Quantity+","+node.Requests+",";
+                if (per.Length > 0) {
+                    data += person.SendData(per);
+                }
+                arr[n] = data;
+                node = node.Next;
+                n += 1;
+            }
+        }
+        return arr;
     }
 
     public Node FindNode(Head head, String isbn, String title) { //Method for manager.
@@ -124,7 +171,7 @@ public class BooksLists {
     }
 
     public boolean EditNode (Head head, String isbn, int Quantity, int Requests) {
-        Node node = new Node();
+        Node node;
         node = FindNode(head, isbn);
         if (node != null) {
             node.Quantity= Quantity;
@@ -135,7 +182,7 @@ public class BooksLists {
     }
 
     public boolean EditNode (Head head, String isbn, int Quantity) {
-        Node node = new Node();
+        Node node;
         node = FindNode(head, isbn);
         if (node != null) {
             node.Quantity= Quantity;

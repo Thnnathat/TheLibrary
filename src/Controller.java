@@ -1,14 +1,14 @@
 package src;
 import Modules.Manager;
-
 import java.io.File;
 import java.util.Scanner; 
+
 public class Controller {
     Manager manager = new Manager();//สร้าง obj ของ Manager class.
-
+    String parentPath = "/home/keang/Documents/coding/Abstact/TheLibrary/data/";
     public void ManagerMenu() {
         menu1 : while (true) {
-            System.out.println("ตัวเลือก\n1.เพิ่มหนังสือ\n2.คืนหนังสือ\n3.บุคคลที่รอคิว\n4.ลบหนังสือ\n5.หนังสือทั้งหมด\n6.เพิ่มชุดหนังสือ\n7.รับหนังสือ\n0.กลับ");
+            System.out.println("ตัวเลือก\n1.เพิ่มหนังสือ\n2.คืนหนังสือ\n3.บุคคลที่รอคิว\n4.ลบหนังสือ\n5.หนังสือทั้งหมด\n6.เพิ่มชุดหนังสือ\n7.รับหนังสือ\n8.บันทึกลงในไฟล์\n0.กลับ");
             System.out.print(">>> ");
             try {
                 Scanner sc = new Scanner(System.in);
@@ -37,6 +37,12 @@ public class Controller {
                         break;
                     case 7 :
                         GetBook();
+                        break;
+                    case 8 : 
+                        manager.SaveFile();
+                        break;
+                    case 9 :
+                        manager.AddDataFile();
                     default : 
                         System.out.println("โปรดป้อนตัวเลือก");
                         continue;
@@ -114,7 +120,8 @@ public class Controller {
 
     public boolean AddBookList() {
         try {
-            File file = new File("/home/keang/Documents/coding/Abstact/TheLibrary/data/FakeBooks.txt");
+            File file = new File(parentPath+"FakeBooks.txt");
+            boolean bool = false;
             try (Scanner input = new Scanner(file)) {
                 String[] data; //isbn title.
                 String rawData = "";
@@ -130,10 +137,10 @@ public class Controller {
                             quantity = Integer.parseInt(data[i]);//จำนวนหนังสือ type int เนื่องจาก array ต้องมีขอมูลประเภทเดียวกัน ต้องแยก Quantity ออก.
                         }  
                     }
-                    manager.AddBook(detail[0], detail[1], quantity);//เพิ่มหนังสือ isbn title quantity parameter. 
+                    bool = manager.AddBook(detail[0], detail[1], quantity);//เพิ่มหนังสือ isbn title quantity parameter. 
                 }
             }
-            return true;
+            return bool;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

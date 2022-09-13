@@ -20,6 +20,23 @@ public class PersonList {
         return per;
     }
 
+    public boolean AddFirst(PersonHead per, String item[], int status) {
+        PerNode node = new PerNode();
+        for (int i=0;i<item.length;i++) {
+            node.Item[i] = item[i];
+        }
+        node.Status = status;
+        node.Next = per.First;
+        if (per.Length == 0) {
+            per.First = node;
+            per.Last = node;
+        } else {
+            per.First = node;
+        }
+        per.Length += 1;
+        return true;
+    }
+    
     public boolean AddLast(PersonHead per, String item [], int status) {
         PerNode node = new PerNode();
         for (int i=0;i<item.length;i++) {
@@ -37,6 +54,8 @@ public class PersonList {
         return true;
     }
 
+    
+
     public void Traverse(PersonHead per) {
         PerNode node;
         node = per.First;
@@ -51,6 +70,30 @@ public class PersonList {
         } else {
             System.out.println("null");
         }
+    }
+
+    public String SendData(PersonHead per) {
+        String data = "";
+        PerNode node;
+        int n = 0;
+        node = per.First;
+        if (per.Length > 0) {
+            while (node != null) {
+                for (int i=0;i<node.Item.length;i++) {
+                    data += node.Item[i];
+                    data += ",";
+                }
+                data += node.Status;
+                if (n+1 < per.Length) {
+                    data += ",";
+                }
+                node = node.Next;
+                n += 1;
+            }
+        } else {
+            return "null";
+        }
+        return data;
     }
 
     public PerNode FindNode(PersonHead per, String item []) {
@@ -81,18 +124,18 @@ public class PersonList {
         return true;
     }
 
-    public boolean DeleteBetween(PersonHead head, String item[]) { //Method for manager.
+    public boolean DeleteBetween(PersonHead per, String item[]) { //Method for manager.
         PerNode prev;
         PerNode node;
-        node = head.First;
+        node = per.First;
         prev = null;
-        if (head.Length == 0) {
+        if (per.Length == 0) {
             return false;
         }
         while (node != null) {
             if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
                 if (prev == null) {
-                    head.First = node.Next;
+                    per.First = node.Next;
                 } else {
                     prev.Next = node.Next;
                 }
