@@ -154,7 +154,7 @@ public class Controller {
         String isbn = sc.nextLine();
         System.out.print(">Title: ");
         String title = sc.nextLine();
-        boolean bool = manager.Cancel(isbn, title, item); 
+        boolean bool = manager.GetBook(isbn, title, item); 
         if (bool) {
             System.out.println("รับหนังสือแล้ว");
         } else {

@@ -28,10 +28,9 @@ public class Manager {
             PerNode perNode;
             PersonHead per = node.per;
             perNode = per.First;
-            while (node.Quantity > node.Requests && perNode != null){
+            while (node.Quantity >= node.Requests && perNode != null){
                 perNode.Status = 1;     
                 perNode = perNode.Next;
-                node.Requests += 1;
             }
             return true;
         }
@@ -51,11 +50,13 @@ public class Manager {
             }
 
             writer.close();       
+            System.out.println("บันทึกสำเร็จ");
         } catch (IOException e) {
-            System.err.println("IOException: " + e.getMessage());
+            System.out.println("บันทึกไม่สำเร็จ");
         }
     }
-
+    
+    //เพิ่มข้อมูลในไฟล์ลงใน lists เรียก method ด้วย contructor.
     public boolean AddDataFile() {
         try {
             File file = new File(parentPath+"data.txt");
@@ -123,8 +124,8 @@ public class Manager {
         Node node = book.FindNode(head, isbn);
         if (node != null) {
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
-                SetQueue(node);
                 node.Quantity += Quantity;
+                SetQueue(node);
                 return true;
             } 
             return false;
@@ -257,8 +258,8 @@ public class Manager {
             PerNode perNode = person.FindNode(per, item);
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
                 if (perNode != null) {
-                    if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) { //!น่าจะมีปัญหา *แก้แล้วรอทดสอบ
-                        boolean bool = person.DeleteBetween(per, item);//ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
+                    if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) { 
+                        boolean bool = person.DeleteBetween(per, item);//ลบ PersonNode คนที่เอามาคืนออก ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
                         if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
                             node.Requests -= 1;
                             SetQueue(node);
@@ -271,7 +272,26 @@ public class Manager {
         return false;
     }
 
-    public boolean GetBook() {
+    //TODO: รอทดสอบ
+    public boolean GetBook(String isbn, String title, String item[]) {
+        Node node = book.FindNode(head, isbn);
+        if (node != null) {
+            PersonList person = node.person;
+            PersonHead per = node.per;
+            PerNode perNode = person.FindNode(per, item);
+            if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
+                if (perNode != null) {
+                    if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1]) && perNode.Status == 1) { //ถึงคิวถึงจะรับหนังสือได้
+                        boolean bool = person.DeleteBetween(per, item);//ลบ PersonNode คนที่เอามาคืนออก ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
+                        if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
+                            node.Requests -= 1;
+                            SetQueue(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 

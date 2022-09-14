@@ -65,15 +65,19 @@ public class BooksLists {
     }    
 
     public void Traverse(Head head) {
+        int queue = 0;
         Node node;
         node = head.First;
         if (head.Length > 0) {
-            System.out.println("ISBN\tTitle\t\tQuantity\tRequests");
+            System.out.println("ISBN\tTitle\t\tQuantity\tRequests\tQueues");
             while (node != null) {
                 for (int i=0;i<node.Detail.length;i++) {
                     System.out.print(node.Detail[i]+"\t");
                 }
-                System.out.printf("%d\t\t"+"%d\t\n",node.Quantity,node.Requests);
+                if (node.Requests > node.Quantity){
+                    queue = node.Requests - (node.Quantity % node.Requests);
+                }
+                System.out.printf("%d\t\t"+"%d\t\t%d\n",node.Quantity,node.Requests,queue);
                 node = node.Next;
             }
         } else {
