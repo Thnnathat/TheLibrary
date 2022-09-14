@@ -76,30 +76,34 @@ public class Manager {
                     rawData = input.nextLine();
                     data = rawData.split(",");//หั่น string ให้อยู่ใน Array.
                     number = (data.length-4)/4;
-                    personItem = new String[4][data.length-3]; 
+                    // System.out.println(data.length); //?ทดสอบโปรกรม
+                    personItem = new String[number][4]; 
                     for (int i=0;i<data.length;i++) {
                         if (i<=1) {//นำแค่ isbn และ title ใส่ใน array (Index 0,1).
                             detail[i] = data[i];
                         } else if (i == 2) {
-                            quantity = Integer.parseInt(data[i]);//จำนวนหนังสือ type int เนื่องจาก array ต้องมีข้อมูลประเภทเดียวกัน ต้องแยก Quantity ออก.
+                            quantity = Integer.parseInt(data[i]);//จำนวนหนังสือ type int เนื่องจาก array ต้องมีข้อมูลประเภทเดียวกัน ต้องแยก Quantity และ reauests ออก.
                         } else if (i == 3){
                             requests = Integer.parseInt(data[i]);
                         } else if (i > 3) {
                             for (int j=0;j<number;j++) {
                                 if (data[i] != null) {
-                                    personItem[j][i-3] = data[i];
+                                    personItem[j][i-4] = data[i];
                                 }
                             }
                         }
                     }
                     bool = this.AddBookLast(detail[0], detail[1], quantity, requests);
                     for (int i=0;i<personItem.length;i++) {
+                        // System.out.println(personItem.length); //?ทดสอบ
                         for (int j=0;j<personItem[i].length;j++) {
                             if (personItem[i][j] != null) {
                                 if (j < 3) {
                                     item[j] = personItem[i][j];
+                                    // System.out.print(personItem[i][j]+" "); //?ทดสอบ
                                 } else if (j == 4) {
                                     stringStatus = personItem[i][4];
+                                    // System.out.println(stringStatus); //?ทดสอบ
                                     status = Integer.parseInt(stringStatus);
                                 }
                             }
@@ -163,8 +167,9 @@ public class Manager {
             PersonList person = node.person;
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
                 for (int i=0;i<node.Detail.length;i++){
-                    System.out.print(node.Detail[i]+"\t\t\n");
+                    System.out.print(node.Detail[i]+"\t");
                 }
+                System.out.println();
                 person.Traverse(per);
             }
         }
@@ -192,20 +197,18 @@ public class Manager {
             PersonHead per = node.per;
             PerNode perNode = person.FindNode(per, item);
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) { //isbn, title
-                if (perNode != null) {
-                    if(!(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1]))) { //!น่าจะมีปัญหา *แก้แล้วรอทดสอบ
-                        if(node.Quantity > node.Requests){
+                if (perNode == null) {
+                    if(node.Quantity > node.Requests){
+                        node.Requests += 1;
+                        return true;//ยืมได้ 
+                    } else {
+                        bool = NeedBorrow();
+                        if (bool) {
+                            node.person.AddLast(per, item, 0);
                             node.Requests += 1;
-                            return true;//ยืมได้ 
+                            return true;
                         } else {
-                            bool = NeedBorrow();
-                            if (bool) {
-                                node.person.AddLast(per, item, 0);
-                                node.Requests += 1;
-                                return true;
-                            } else {
-                                return false;//ยืมไม่ได้ หรือไม่ได้ยืม
-                            }
+                            return false;//ยืมไม่ได้ หรือไม่ได้ยืม
                         }
                     }
                 }

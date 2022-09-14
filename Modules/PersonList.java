@@ -1,6 +1,7 @@
 package Modules;
 public class PersonList {
     
+    public String[] table = {"Id", "Auth", "Name"};
     public static class PerNode {
         String Item [] = new String[3]; //Id Auth Name
         int Status;
@@ -62,7 +63,7 @@ public class PersonList {
         if (per.Length > 0) {
             while (node != null) {
                 for (int i=0;i<node.Item.length;i++) {
-                    System.out.print(node.Item[i]+" ");
+                    System.out.print(this.table[i]+": "+node.Item[i]+" ");
                 }
                 System.out.println(node.Status);
                 node = node.Next;

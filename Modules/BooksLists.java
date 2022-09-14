@@ -73,7 +73,7 @@ public class BooksLists {
                 for (int i=0;i<node.Detail.length;i++) {
                     System.out.print(node.Detail[i]+"\t");
                 }
-                System.out.printf("%d\t\t"+"%d\t%d\n",node.Quantity,node.Requests,(Math.abs(node.Quantity-node.Requests)));
+                System.out.printf("%d\t\t"+"%d\t\n",node.Quantity,node.Requests);
                 node = node.Next;
             }
         } else {
