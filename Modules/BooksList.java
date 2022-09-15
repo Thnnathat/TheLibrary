@@ -2,16 +2,15 @@ package Modules;
 import Modules.PersonList.PerNode;
 import Modules.PersonList.PersonHead;;
 
-public class BooksLists {
+public class BooksList {
 
     public static class Node {
-        PersonList person = new PersonList();
-        PersonHead per = person.CreateList();
         String Detail [] = new String[2];
         int Quantity = 0;
         int Requests = 0;
+        PersonList person = new PersonList();
+        PersonHead per = person.CreateList();
         Node Next;
-        public int length;
     }
 
     public static class Head {
@@ -19,6 +18,7 @@ public class BooksLists {
         Node First, Last;
     }
 
+//*1 */
     public Head CreateList() {
         Head head = new Head();
         head.Length = 0;
@@ -27,6 +27,7 @@ public class BooksLists {
         return head;
     }
 
+//*2 */
     public boolean AddFirst(Head head, String Detail [], int Quantity) {
         Node node = new Node();
         for (int i=0;i<Detail.length;i++) {
@@ -45,6 +46,7 @@ public class BooksLists {
         return true;
     }
 
+//*3 */
     public boolean AddLast(Head per, String item [], int quantity, int requests) {
         Node node = new Node();
         for (int i=0;i<item.length;i++) {
@@ -64,6 +66,7 @@ public class BooksLists {
         return true;
     }    
 
+//*4 */
     public void Traverse(Head head) {
         int queue = 0;
         Node node;
@@ -85,6 +88,7 @@ public class BooksLists {
         }
     }
 
+//*5 */
 //*Overload ท่องไปทุกโหนด รวมทั้ง Sub Node*/
     public void Traverse(Head head, String item[]) {
         Node node;
@@ -93,7 +97,7 @@ public class BooksLists {
         PerNode perNode;
         node = head.First;
         if (head.Length > 0) {
-            System.out.println("ISBN\t\tTitle\t\tStatus");
+            System.out.println("ISBN\t\tTitle\tStatus");
             while (node != null) {
                 person = node.person;
                 per = node.per;
@@ -121,6 +125,7 @@ public class BooksLists {
         }
     }
 
+//*6 */
     public String[] SaveFile(Head head) {
         Node node;
         PersonList person;
@@ -149,6 +154,7 @@ public class BooksLists {
         return arr;
     }
 
+//*7 */
     public Node FindNode(Head head, String isbn, String title) { //Method for manager.
         Node node;
         node = head.First;
@@ -161,6 +167,7 @@ public class BooksLists {
         return node; //ถ้าพบโหนดขอมูลที่เราต้องการแล้ว ให้ return โหนดตัวนั้น
     }
 
+//*8 */
     //*Overload สำหรับแค่ isbn*/
     public Node FindNode(Head head, String isbn) { //Method for manager.
         Node node;
@@ -174,6 +181,7 @@ public class BooksLists {
         return node; //ถ้าพบโหนดขอมูลที่เราต้องการแล้ว ให้ return โหนดตัวนั้น
     }
 
+//*9 */
     public boolean EditNode (Head head, String isbn, int Quantity, int Requests) {
         Node node;
         node = FindNode(head, isbn);
@@ -185,16 +193,7 @@ public class BooksLists {
         return false;
     }
 
-    public boolean EditNode (Head head, String isbn, int Quantity) {
-        Node node;
-        node = FindNode(head, isbn);
-        if (node != null) {
-            node.Quantity= Quantity;
-            return true;
-        }
-        return false;
-    }
-
+//*10 */
     public boolean DeleteBetween(Head head, String item) { //Method for manager.
         Node prev;
         Node node;

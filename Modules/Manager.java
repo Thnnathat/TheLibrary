@@ -1,8 +1,8 @@
 //!Very hard code.
 package Modules;
 import java.util.Scanner;
-import Modules.BooksLists.Head;
-import Modules.BooksLists.Node;
+import Modules.BooksList.Head;
+import Modules.BooksList.Node;
 import Modules.PersonList.PerNode;
 import Modules.PersonList.PersonHead;
 import java.io.BufferedWriter;
@@ -20,16 +20,39 @@ public class Manager {
     }
 
     String parentPath = "/home/keang/Documents/coding/Abstact/TheLibrary/data/";
-    BooksLists book = new BooksLists();
+    BooksList book = new BooksList();
     Head head = book.CreateList();
 
-    public boolean SetQueue(Node node) {
+    public boolean SetQueue(Node node) {//!มีปัญหา รอแก้
         if (node != null) {
             PerNode perNode;
             PersonHead per = node.per;
             perNode = per.First;
+            if (perNode != null) {
+                perNode.Status = 1;     
+                perNode = perNode.Next;
+            }
             while (node.Quantity >= node.Requests && perNode != null){
                 perNode.Status = 1;     
+                perNode = perNode.Next;
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean SetQueue(Node node, int Queue) {
+        if (node != null) {
+            PerNode perNode;
+            PersonHead per = node.per;
+            perNode = per.First;
+
+            while (Queue > 0 && perNode != null){
+                if (perNode.Status !=1) {//Nodeที่จะตั้ง status เป็น 1 StatusของNodeนั้นต้องไม่เป็น1อยู่แล้ว.
+                    perNode.Status = 1;     
+                    Queue -= 1;
+                }
                 perNode = perNode.Next;
             }
             return true;
@@ -43,7 +66,6 @@ public class Manager {
             String[] data = book.SaveFile(head);
             Path file = Paths.get(parentPath+"data.txt");
             BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8);   
-
             for (int i = 0; i < data.length; i++) {
                 writer.write(data[i]);
                 writer.newLine();
@@ -68,17 +90,18 @@ public class Manager {
                 String[] item = new String[3];
                 int status = 0;
                 String[][] personItem;
-                int number = 0;
+                int row = 0;
                 int quantity = 0; // quantity.
                 int requests = 0;
+                int number = 0, k = 0;
                 String stringStatus = "";
 
                 while (input.hasNext()) {//ตรวจบรรทัด
                     rawData = input.nextLine();
                     data = rawData.split(",");//หั่น string ให้อยู่ใน Array.
-                    number = (data.length-4)/4;
-                    // System.out.println(data.length); //?ทดสอบโปรกรม
-                    personItem = new String[number][4]; 
+                    row = (data.length-4)/4;
+                    personItem = new String[row][4]; 
+                    // System.out.println(data.length);
                     for (int i=0;i<data.length;i++) {
                         if (i<=1) {//นำแค่ isbn และ title ใส่ใน array (Index 0,1).
                             detail[i] = data[i];
@@ -86,30 +109,32 @@ public class Manager {
                             quantity = Integer.parseInt(data[i]);//จำนวนหนังสือ type int เนื่องจาก array ต้องมีข้อมูลประเภทเดียวกัน ต้องแยก Quantity และ reauests ออก.
                         } else if (i == 3){
                             requests = Integer.parseInt(data[i]);
-                        } else if (i > 3) {
-                            for (int j=0;j<number;j++) {
-                                if (data[i] != null) {
-                                    personItem[j][i-4] = data[i];
-                                }
+                        } else if (i > 3) { //ตั้งแต่ Index ที่ 4 เป็นต้นไปเป็นข้อมูลบุคคล
+                            if (number == 4) {
+                                k += 1;
+                                number = 0;
                             }
+                            if (data[i] != null) {
+                                personItem[k][number] = data[i];
+                            }
+                            number += 1;
                         }
                     }
                     bool = this.AddBookLast(detail[0], detail[1], quantity, requests);
                     for (int i=0;i<personItem.length;i++) {
-                        // System.out.println(personItem.length); //?ทดสอบ
                         for (int j=0;j<personItem[i].length;j++) {
                             if (personItem[i][j] != null) {
-                                if (j < 3) {
-                                    item[j] = personItem[i][j];
-                                    // System.out.print(personItem[i][j]+" "); //?ทดสอบ
-                                } else if (j == 4) {
+                                if (j < 3) { //เอาแค่ Index 0-2 ตัวอย่าง ["3","3","Jane"]
+                                    item[j] = personItem[i][j];//แยก id auth name อกก
+                                } else if (j == 4) { //Index 4 "0"
                                     stringStatus = personItem[i][4];
-                                    // System.out.println(stringStatus); //?ทดสอบ
-                                    status = Integer.parseInt(stringStatus);
+                                    status = Integer.parseInt(stringStatus);//แยก status มาแปลงเป็น Integer ตัวอย่าง 0
                                 }
+                                // System.out.print(personItem[i][j]);
                             }
                         }
-                        this.Borrowing(detail[0], item, status);
+                        // System.out.println();
+                        this.BorrowingLast(detail[0], item, status); //เพิ่มเป็น Borrower
                     }
                 }
                 return bool;
@@ -125,7 +150,7 @@ public class Manager {
         if (node != null) {
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
                 node.Quantity += Quantity;
-                SetQueue(node);
+                SetQueue(node, Quantity);
                 return true;
             } 
             return false;
@@ -147,13 +172,13 @@ public class Manager {
         return false;
     }
 
-    public boolean ReturnBook(String isbn, int Requests) {
+    public boolean ReturnBook(String isbn, int turn) {
         Node node = book.FindNode(head, isbn); //ถ้าไม่มีหนังสือเล่มที่จะคืนในคลัง Return null
         if (node != null) {//ถ้า null จะไม่ทำงานใดๆ
             if(node.Detail[0].equalsIgnoreCase(isbn)) {
-                if(node.Requests > 0) {
-                    node.Requests -= Requests;
-                    SetQueue(node);
+                if(node.Quantity-turn >= 0) {
+                    node.Requests -= turn;
+                    SetQueue(node, turn);
                     return true;
                 }
             } 
@@ -190,13 +215,78 @@ public class Manager {
         }
     }
 
+    //*Array
+    // public boolean Borrowing(String isbn, String title, String item[]) {
+    //     Node node = book.FindNode(head, isbn, title);
+    //     boolean bool;
+    //     if (node != null) {
+    //         PersonList person = node.person;
+    //         PersonHead per = node.per;
+    //         PerNode perNode = person.FindNode(per, item);
+    //         if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) { //isbn, title
+    //             if (perNode == null) {
+    //                 if(node.Quantity > node.Requests){
+    //                     node.Requests += 1;
+    //                     return true;//ยืมได้ 
+    //                 } else {
+    //                     bool = NeedBorrow();
+    //                     if (bool) {
+    //                         node.person.AddLast(per, item, 0);
+    //                         return true;
+    //                     } else {
+    //                         return false;//ยืมไม่ได้ หรือไม่ได้ยืม
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    //TODO: แก้ไข
     public boolean Borrowing(String isbn, String title, String item[]) {
         Node node = book.FindNode(head, isbn, title);
+        boolean bool;
+        int status = 0;
+        if (node != null) {
+            PersonHead per = node.per;
+            if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) { //isbn, title
+                    if (node.Quantity > node.Requests) {
+                        status = 1;
+                    }
+                    bool = node.person.AddLast(per, item, status);
+                    node.Requests += 1;
+                    return bool;
+            }
+        }
+        return false;
+    }
+
+    public boolean BorrowingLast(String isbn, String item[], int status) {
+        Node node = book.FindNode(head, isbn);
         boolean bool;
         if (node != null) {
             PersonList person = node.person;
             PersonHead per = node.per;
             PerNode perNode = person.FindNode(per, item);
+            if(node.Detail[0].equalsIgnoreCase(isbn)) { //isbn, title
+                if (perNode == null) {
+                    bool = node.person.AddLast(per, item, status);
+                    return bool;
+                }
+            }
+        }
+        return false;
+    }
+
+//!primitive data type variable.
+    public boolean Borrowing(String isbn, String title, String id, String auth, String name) {
+        Node node = book.FindNode(head, isbn, title);
+        boolean bool;
+        if (node != null) {
+            PersonList person = node.person;
+            PersonHead per = node.per;
+            PerNode perNode = person.FindNode(per, id, auth, name);
             if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)) { //isbn, title
                 if (perNode == null) {
                     if(node.Quantity > node.Requests){
@@ -205,7 +295,7 @@ public class Manager {
                     } else {
                         bool = NeedBorrow();
                         if (bool) {
-                            node.person.AddLast(per, item, 0);
+                            node.person.AddLast(per, id, auth, name, 0);
                             node.Requests += 1;
                             return true;
                         } else {
@@ -261,9 +351,11 @@ public class Manager {
                     if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1])) { 
                         boolean bool = person.DeleteBetween(per, item);//ลบ PersonNode คนที่เอามาคืนออก ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
                         if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
-                            node.Requests -= 1;
-                            SetQueue(node);
+                            book.EditNode(head, isbn, node.Quantity, node.Requests-1); //การแก้ไขโหนดด้วย Method
                             return true;
+                        }
+                        if (perNode.Status == 1) { //เป็นการสละสิทธิ์/คิว จะให้สิทธิ์คนอืนต่อไป
+                            SetQueue(node, 1);
                         }
                     }
                 }
@@ -271,6 +363,29 @@ public class Manager {
         }
         return false;
     }
+
+    // //TODO: รอทดสอบ
+    // public boolean GetBook(String isbn, String title, String item[]) {
+    //     Node node = book.FindNode(head, isbn);
+    //     if (node != null) {
+    //         PersonList person = node.person;
+    //         PersonHead per = node.per;
+    //         PerNode perNode = person.FindNode(per, item);
+    //         if(node.Detail[0].equalsIgnoreCase(isbn) || node.Detail[1].equalsIgnoreCase(title)){
+    //             if (perNode != null) {
+    //                 if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1]) && perNode.Status == 1) { //ถึงคิวถึงจะรับหนังสือได้
+    //                     boolean bool = person.DeleteBetween(per, item);//ลบ PersonNode คนที่เอามาคืนออก ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
+    //                     // if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
+    //                     //     node.Requests -= 1;//Requests จะไม่ลบ จนกว่าบุคคลจะมารับหนังสือ
+    //                     //     SetQueue(node, 1);
+    //                     //     return true;
+    //                     // }
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return false;
+    // }
 
     //TODO: รอทดสอบ
     public boolean GetBook(String isbn, String title, String item[]) {
@@ -283,11 +398,10 @@ public class Manager {
                 if (perNode != null) {
                     if(perNode.Item[0].equalsIgnoreCase(item[0]) && perNode.Item[1].equalsIgnoreCase(item[1]) && perNode.Status == 1) { //ถึงคิวถึงจะรับหนังสือได้
                         boolean bool = person.DeleteBetween(per, item);//ลบ PersonNode คนที่เอามาคืนออก ถ้าคนนั้นๆ มีอยู่ในPerson(Node)จริง จะ return True.
-                        if (bool) { //ต้องเป็นคนที่อยู่ใน PersonList ใน Book(Node) นั้นๆ ถึงจะทำงาน
-                            node.Requests -= 1;
-                            SetQueue(node);
-                            return true;
-                        }
+                        // if (bool) {
+                        //     node.Requests -= 1;
+                        // }
+                        return bool;
                     }
                 }
             }

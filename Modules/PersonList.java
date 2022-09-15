@@ -37,12 +37,14 @@ public class PersonList {
         per.Length += 1;
         return true;
     }
-    
+
+//*comapre Array primitive data type variable.
     public boolean AddLast(PersonHead per, String item [], int status) {
         PerNode node = new PerNode();
         for (int i=0;i<item.length;i++) {
             node.Item[i] = item[i];
         }
+        node.Status = status;
         node.Next = null;
         if (per.Length == 0) {
             per.First = node;
@@ -55,7 +57,24 @@ public class PersonList {
         return true;
     }
 
-    
+//!comapre Array primitive data type variable.
+    public boolean AddLast(PersonHead per, String id, String auth, String name, int status) {
+        PerNode node = new PerNode();
+        node.Item[0] = id;
+        node.Item[1] = auth;
+        node.Item[2] = name;
+        node.Status = status;
+        node.Next = null;
+        if (per.Length == 0) {
+            per.First = node;
+            per.Last = node;
+        } else {
+            per.Last.Next = node;
+            per.Last = node; 
+        }
+        per.Length += 1;
+        return true;
+    }
 
     public void Traverse(PersonHead per) {
         PerNode node;
@@ -102,6 +121,18 @@ public class PersonList {
         node = per.First;
         while (node != null) {
             if (node.Item[0].equals(item[0]) && node.Item[1].equals(item[1])) {
+                break;
+            }
+            node = node.Next;
+        }
+        return node; //ถ้าพบโหนดขอมูลที่เราต้องการแล้ว ให้ return โหนดตัวนั้น
+    }
+
+    public PerNode FindNode(PersonHead per, String id, String auth, String name) {
+        PerNode node;
+        node = per.First;
+        while (node != null) {
+            if (node.Item[0].equals(id) && node.Item[1].equals(name)) {
                 break;
             }
             node = node.Next;

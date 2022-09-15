@@ -204,6 +204,8 @@ public class Controller {
     }
 
 //!Method for User.
+
+//*comapre Array primitive data type variable.
     public void Borrow(String item[]) {
         Scanner sc = new Scanner(System.in);
         System.out.print(">Isbn: ");
@@ -211,6 +213,22 @@ public class Controller {
         System.out.print(">Title: ");
         String title = sc.nextLine();
         boolean bool = manager.Borrowing(isbn, title, item);
+        if (bool) {
+            System.out.println("ยืมหนังสือ/รอคิวยืมหนังสือสำเร็จ");
+        } else {
+            System.out.println("ยืมหนังสือ/รอคิวยืมหนังสือไม่สำเร็จ");
+        }
+        System.out.println("--------------------");
+    }
+
+//!Overload for comapre Array primitive data type variable.
+    public void Borrow(String id, String auth, String name) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print(">Isbn: ");
+        String isbn = sc.nextLine();
+        System.out.print(">Title: ");
+        String title = sc.nextLine();
+        boolean bool = manager.Borrowing(isbn, title, id, auth, name);
         if (bool) {
             System.out.println("ยืมหนังสือ/รอคิวยืมหนังสือสำเร็จ");
         } else {

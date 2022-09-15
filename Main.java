@@ -28,7 +28,18 @@ class Main {
             }
         } catch (Exception e) {
         }
-        
-        // WriteFile();
+
+        // test();
+    }
+
+    public static void test() {
+        String[][] data = new String[2][4];
+        for (int i=0;i<data.length;i++) {
+            System.out.println("Row: "+data.length);
+            for (int j=0;j<data[i].length;j++) {
+                System.out.println("Column: "+data[i].length);
+            }
+        }
+        System.out.println(data[0][0]);
     }
 }
